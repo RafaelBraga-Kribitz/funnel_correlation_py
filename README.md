@@ -1,5 +1,12 @@
 # funnel-correlation-py
 
+![funnel-correlation-py — Binarize, correlate, plot: a Python port of the R correlationfunnel package for ranking feature–target associations before modelling.](docs/assets/funnel_example.png)
+
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Status: Functional](https://img.shields.io/badge/status-Functional-green)](#status)
+
+
 ```mermaid
 flowchart LR
   A["raw DataFrame"] --> B["binarize()"]
@@ -63,7 +70,7 @@ Converts a tidy DataFrame to binary (0/1) format.
 | `name_infreq` | `str` | `"-OTHER"` | Label for lumped rare levels |
 | `one_hot` | `bool` | `True` | `True` = all levels; `False` = drop first (dummy) |
 
-**What it does per column type:**
+#### What it enforces per column type
 
 | Column dtype | Transformation |
 |--------------|---------------|
