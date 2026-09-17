@@ -1,22 +1,26 @@
 # funnel-correlation-py
 
-Python port of the R [`correlationfunnel`](https://github.com/business-science/correlationfunnel) package by Business Science.
+![funnel-correlation-py — Binarize, correlate, plot: a Python port of the R correlationfunnel package for ranking feature–target associations before modelling.](docs/assets/funnel_example.png)
 
-Speeds up exploratory data analysis (EDA) by surfacing the strongest
-feature-target relationships through a three-step binary correlation workflow.
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Status: Functional](https://img.shields.io/badge/status-Functional-green)](#status)
 
----
 
-## Three-step workflow
-
-```
-raw DataFrame
-  -> binarize(df)                    # numeric + categorical -> binary (0/1)
-  -> correlate(binary_df, target)    # Pearson r of each feature vs target
-  -> plot_correlation_funnel(corr)   # tornado chart, strongest predictors on top
+```mermaid
+flowchart LR
+  A["raw DataFrame"] --> B["binarize()"]
+  B --> C["correlate()"]
+  C --> D["plot_correlation_funnel()"]
 ```
 
----
+**Status:** Functional · Python ≥3.10 · MIT
+
+Mixed-type tables hide which feature levels actually move with a target. This library ranks those relationships in three steps so exploratory analysis starts with the strongest associations, not a wall of plots.
+
+## What it does
+
+`binarize` converts numeric and categorical columns to 0/1 features. `correlate` computes Pearson r of each feature against a chosen target. `plot_correlation_funnel` draws a tornado chart with the strongest predictors at the top. It is a Python port of Business Science's R [`correlationfunnel`](https://github.com/business-science/correlationfunnel) package.
 
 ## Quick start
 
@@ -24,37 +28,33 @@ raw DataFrame
 from funnel_correlation_py import binarize, correlate, plot_correlation_funnel
 from funnel_correlation_py.data import load_marketing_campaign
 
-# 1. Load
 df = load_marketing_campaign().drop(columns=["ID"])
-
-# 2. Binarize
 binary_df = binarize(df, n_bins=4, thresh_infreq=0.01)
-
-# 3. Correlate (pick the binary target column)
 corr_df = correlate(binary_df, target="TERM_DEPOSIT__yes")
 
-# 4. Plot (static)
 fig = plot_correlation_funnel(corr_df, limits=(-0.4, 0.4))
 fig.tight_layout()
 
-# 4b. Plot (interactive, requires plotly)
+# interactive plot requires: pip install -e ".[interactive]"
 fig_interactive = plot_correlation_funnel(corr_df, interactive=True)
 fig_interactive.show()
 ```
 
----
+## Explore this project
+
+| Path | Start here |
+|---|---|
+| Fast path | [What it does](#what-it-does) and the copy-paste example above |
+| Deep path | [API reference](#api-reference), [repository structure](#repository-structure), and `tests/run_validation.py` |
 
 ## Installation
 
 ```bash
-# From the project root
 pip install -e .
-
-# With interactive (plotly) support
-pip install -e ".[interactive]"
+pip install -e ".[interactive]"   # plotly tornado chart
 ```
 
----
+Requires Python 3.10+. Core dependencies: pandas, numpy, matplotlib.
 
 ## API reference
 
@@ -70,19 +70,17 @@ Converts a tidy DataFrame to binary (0/1) format.
 | `name_infreq` | `str` | `"-OTHER"` | Label for lumped rare levels |
 | `one_hot` | `bool` | `True` | `True` = all levels; `False` = drop first (dummy) |
 
-**What it does per column type:**
+#### What it enforces per column type
 
 | Column dtype | Transformation |
 |--------------|---------------|
-| `float` / `int` (high cardinality) | Quantile binning -> one-hot encode |
-| `float` / `int` (low cardinality) | Treated as categorical -> one-hot encode |
-| `object` / `category` | Rare levels lumped -> one-hot encode |
+| `float` / `int` (high cardinality) | Quantile binning → one-hot encode |
+| `float` / `int` (low cardinality) | Treated as categorical → one-hot encode |
+| `object` / `category` | Rare levels lumped → one-hot encode |
 | `bool` | Cast to `int`, then binned |
 | Constant column | Dropped (zero variance) |
 
 Column names use `__` as separator: `age__18_35`, `job__admin`.
-
----
 
 ### `correlate(data, target, method="pearson")`
 
@@ -94,13 +92,9 @@ Computes Pearson r between every binary feature and `target`.
 | `target` | `str` | required | Column name of the response variable |
 | `method` | `str` | `"pearson"` | Passed to `pd.DataFrame.corrwith` |
 
-Returns a tidy DataFrame with columns `feature`, `bin`, `correlation`,
-sorted descending by `|correlation|`.  `feature` is a `pd.Categorical`
-ordered for correct y-axis positioning in plots.
+Returns a tidy DataFrame with columns `feature`, `bin`, `correlation`, sorted descending by `|correlation|`. `feature` is a `pd.Categorical` ordered for correct y-axis positioning in plots.
 
 Emits a `UserWarning` when the positive-class proportion is below 5%.
-
----
 
 ### `plot_correlation_funnel(data, interactive=False, limits=(-1,1), alpha=1.0, figsize=(10,8), title="Correlation Funnel")`
 
@@ -109,66 +103,63 @@ Tornado-style plot of correlation strength.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `data` | `pd.DataFrame` | required | Output of `correlate()` |
-| `interactive` | `bool` | `False` | `True` returns plotly figure |
+| `interactive` | `bool` | `False` | `True` returns a plotly figure |
 | `limits` | `tuple` | `(-1, 1)` | X-axis range |
 | `alpha` | `float` | `1.0` | Point transparency |
 | `figsize` | `tuple` | `(10, 8)` | Static figure size (inches) |
 | `title` | `str` | `"Correlation Funnel"` | Plot title |
 
----
-
-## Folder structure
+## Repository structure
 
 ```
 funnel_correlation_py/
-  README.md
-  pyproject.toml
-  notebooks/
-    01_example_usage.ipynb      <- end-to-end demo
-  data/
-    raw/                        <- downloaded datasets cached here
-  src/
-    funnel_correlation_py/
-      __init__.py
-      binarize.py               <- core transformation
-      correlate.py              <- Pearson correlation
-      plot.py                   <- static + interactive plots
-      data.py                   <- dataset loaders + synthetic fallbacks
-      features/
-      models/
-      evaluation/
-      visualization/
-      utils/
-  tests/
-    test_binarize.py
-    test_correlate.py
-    test_plot.py
-    run_validation.py           <- standalone runner (no pytest required)
+  src/funnel_correlation_py/
+    binarize.py      # numeric + categorical → 0/1
+    correlate.py     # Pearson r vs target
+    plot.py          # matplotlib / plotly tornado chart
+    data.py          # example loaders + synthetic fallback
+  tests/             # pytest + standalone run_validation.py
+  notebooks/         # end-to-end demo on bank marketing data
 ```
 
----
+Synthetic loaders use `numpy.random.default_rng(seed=42)`. Downloaded example tables cache under `data/raw/` on first fetch.
 
-## Running validation
+## Limitations
+
+- Pearson r on binarized features is an association screen, not a causal model and not a substitute for a fitted classifier.
+- Input tables must have no missing values and no datetime columns.
+- Rare-level lumping and quantile bins are modelling choices (`n_bins`, `thresh_infreq`); changing them changes which levels appear strong.
+- A binary target with positive-class share below 5% emits a warning; magnitudes can look decisive on small or skewed samples.
+- Bundled examples are public bank-marketing / telco-churn tables, or a seeded synthetic fallback when download fails. They demonstrate the API. They are not a client conversion funnel.
+
+## Status
+
+**Status:** Functional
+
+v0.1.0. The three public functions are implemented and covered by unit tests plus `PYTHONPATH=src python tests/run_validation.py`.
 
 ```bash
-# No pytest required
+pip install -e ".[dev]"
 PYTHONPATH=src python tests/run_validation.py
-
-# With pytest (install first)
 PYTHONPATH=src pytest tests/ -v
 ```
 
----
+## License
 
-## Reproducibility
+MIT, as declared in `pyproject.toml`.
 
-- Seeds used: `numpy.random.default_rng(seed=42)` in all synthetic data.
-- Raw datasets cached in `data/raw/` on first download.
-- No business logic in notebooks; all reusable code lives in `src/`.
+Original R package: [Business Science — correlationfunnel](https://github.com/business-science/correlationfunnel). Binary-correlation background: Duan et al., 2014, *Selecting the right correlation measure for binary data*, ACM TKDD.
 
----
+## Author
 
-## Credits
-
-Original R package: [Business Science — correlationfunnel](https://github.com/business-science/correlationfunnel)
-Paper: Duan et al., 2014 — *Selecting the right correlation measure for binary data*. ACM TKDD.
+<table>
+  <tr>
+    <td>
+      <strong>Rafael Braga-Kribitz</strong><br />
+      Seiersberg-Pirka, Austria · Portfolio project, 2026<br />
+      <a href="https://www.linkedin.com/in/rafaelbragakribitz/">LinkedIn</a>
+      ·
+      <a href="mailto:rafaelbragakribitz@gmail.com">rafaelbragakribitz@gmail.com</a>
+    </td>
+  </tr>
+</table>
