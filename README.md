@@ -1,11 +1,18 @@
 # funnel-correlation-py
 
-![funnel-correlation-py — Binarize, correlate, plot: a Python port of the R correlationfunnel package for ranking feature–target associations before modelling.](docs/assets/funnel_example.png)
+![funnel-correlation-py — Binarize, correlate, plot: a Python port of the R correlationfunnel package for ranking feature–target associations before modelling.](docs/assets/hero.png)
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Status: Functional](https://img.shields.io/badge/status-Functional-green)](#status)
 
+**Status:** Functional · Python ≥3.10 · MIT
+
+Mixed-type tables hide which feature levels actually move with a target. This library ranks those relationships in three steps so exploratory analysis starts with the strongest associations, not a wall of plots.
+
+![Correlation funnel rendered by the Quick start below on the bundled bank-marketing example (4,521 rows, 74 binary features); strongest predictors of TERM_DEPOSIT at the top](docs/assets/funnel_example.png)
+
+*Output of the Quick start code below on the bundled bank-marketing example. The plot is the library's own `plot_correlation_funnel` result, not a hand-made illustration.*
 
 ```mermaid
 flowchart LR
@@ -13,10 +20,6 @@ flowchart LR
   B --> C["correlate()"]
   C --> D["plot_correlation_funnel()"]
 ```
-
-**Status:** Functional · Python ≥3.10 · MIT
-
-Mixed-type tables hide which feature levels actually move with a target. This library ranks those relationships in three steps so exploratory analysis starts with the strongest associations, not a wall of plots.
 
 ## What it does
 
@@ -154,6 +157,13 @@ Original R package: [Business Science — correlationfunnel](https://github.com/
 
 <table>
   <tr>
+    <td width="110">
+      <img
+        src="docs/assets/Author_MDS_Rafael_Braga-Kribitz_kroped.png"
+        alt="Rafael Braga-Kribitz"
+        width="96"
+      />
+    </td>
     <td>
       <strong>Rafael Braga-Kribitz</strong><br />
       Seiersberg-Pirka, Austria · Portfolio project, 2026<br />

@@ -1,0 +1,83 @@
+{
+  "output": "C:\\Users\\Benutzer1\\Dev\\portfolio-readme-work\\funnel_correlation_py\\docs\\assets\\hero.png",
+  "width": 1600,
+  "height": 640,
+  "mode": "light",
+  "fonts": "Söhne from C:\\Users\\Benutzer1\\Dev\\braga-design-system-template\\public\\fonts",
+  "title_size": 112,
+  "descriptor_size": 36,
+  "attempts": 1,
+  "blocks": {
+    "kind": {
+      "bbox": [
+        72,
+        72,
+        312,
+        104
+      ],
+      "lines": [
+        "BRAGA · LIBRARY"
+      ],
+      "font": "SohneMono-Buch.otf"
+    },
+    "status": {
+      "bbox": [
+        1368,
+        72,
+        1528,
+        104
+      ],
+      "lines": [
+        "FUNCTIONAL"
+      ],
+      "font": "SohneMono-Buch.otf"
+    },
+    "facts": {
+      "bbox": [
+        72,
+        542,
+        1392,
+        570
+      ],
+      "lines": [
+        "LICENSE  MIT  ·  RUNTIME  Python >=3.10  ·  REPO  github.com/RafaelBraga-Kribitz/funnel_correlation_py"
+      ],
+      "font": "SohneMono-Buch.otf"
+    },
+    "title": {
+      "bbox": [
+        72,
+        184,
+        1212,
+        298
+      ],
+      "lines": [
+        "funnel-correlation-py"
+      ],
+      "font": "Sohne-Fett.otf"
+    },
+    "descriptor": {
+      "bbox": [
+        72,
+        326,
+        1122,
+        422
+      ],
+      "lines": [
+        "Binarize, correlate, plot: a Python port of the R correlationfunnel",
+        "package for ranking feature–target associations before modelling."
+      ],
+      "font": "Sohne-Buch.otf"
+    }
+  },
+  "guardrails": [
+    "safe-area",
+    "wrap-and-shrink",
+    "line-length",
+    "no-overlap",
+    "glyph-coverage-per-char",
+    "contrast>=4.5",
+    "pixel-scan"
+  ],
+  "validated": true
+}
