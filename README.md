@@ -15,7 +15,7 @@ Mixed-type tables hide which feature levels actually move with a target. This li
 *Output of the Quick start code below on the bundled bank-marketing example. The plot is the library's own `plot_correlation_funnel` result, not a hand-made illustration.*
 
 ```mermaid
-flowchart LR
+flowchart TD
   A["raw DataFrame"] --> B["binarize()"]
   B --> C["correlate()"]
   C --> D["plot_correlation_funnel()"]
