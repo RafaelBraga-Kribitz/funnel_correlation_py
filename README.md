@@ -2,9 +2,9 @@
 
 ![funnel-correlation-py: binarize, correlate, plot: a Python port of the R correlationfunnel package for ranking feature–target associations before modelling.](docs/assets/hero.png)
 
-[![Python 3.10](https://img.shields.io/badge/python-3.10-blue)](pyproject.toml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Status: Functional](https://img.shields.io/badge/status-Functional-green)](#status)
+[![Python 3.10](https://img.shields.io/badge/python-3.10-5A5C61?labelColor=26282C)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-5A5C61?labelColor=26282C)](LICENSE)
+[![Status: Functional](https://img.shields.io/badge/status-Functional-5A5C61?labelColor=26282C)](#status)
 
 **Status:** Functional · Python ≥3.10 · MIT
 
@@ -15,6 +15,33 @@ Mixed-type tables hide which feature levels actually move with a target. This li
 *Output of the Quick start code below on the bundled bank-marketing example. The strongest positive associations with a term deposit are the top quartile of call duration (`DURATION` bin 329_3025, r = 0.33) and a successful previous campaign (`POUTCOME` success, r = 0.28); `DEFAULT` sits at zero. The plot is the library's own `plot_correlation_funnel` result, not a hand-made illustration.*
 
 ```mermaid
+%%{init: {
+  "theme": "base",
+  "fontFamily": "BKribitz, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif",
+  "themeVariables": {
+    "background": "#E4E6EA",
+    "primaryColor": "#DCDEE2",
+    "primaryTextColor": "#26282C",
+    "primaryBorderColor": "#26282C",
+    "secondaryColor": "#E4E6EA",
+    "secondaryTextColor": "#26282C",
+    "secondaryBorderColor": "#5A5C61",
+    "tertiaryColor": "#E4E6EA",
+    "tertiaryTextColor": "#26282C",
+    "tertiaryBorderColor": "#C2C4CA",
+    "lineColor": "#5A5C61",
+    "textColor": "#26282C",
+    "mainBkg": "#DCDEE2",
+    "nodeBorder": "#26282C",
+    "clusterBkg": "#E4E6EA",
+    "clusterBorder": "#C2C4CA",
+    "edgeLabelBackground": "#E4E6EA",
+    "titleColor": "#26282C",
+    "fontFamily": "BKribitz, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif",
+    "fontSize": "14px"
+  },
+  "flowchart": { "curve": "linear", "htmlLabels": true, "padding": 8 }
+}}%%
 flowchart TD
   A["raw DataFrame"] --> B["binarize()"]
   B --> C["correlate()"]
