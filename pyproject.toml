@@ -14,7 +14,9 @@ authors = [{ name = "Rafael Braga Kribitz" }]
 dependencies = [
     "pandas>=2.0",
     "numpy>=1.24",
-    "matplotlib>=3.7",
+    "matplotlib>=3.8",
+    # Braga design system chart theme (bk-viz 2.0.0); re-pin to the v2.0.0 tag
+    "bk-viz @ git+https://github.com/RafaelBraga-Kribitz/bk-viz@f4f90b2c76b8fed4f27caa9b29282336d779a3da",
 ]
 
 [project.optional-dependencies]

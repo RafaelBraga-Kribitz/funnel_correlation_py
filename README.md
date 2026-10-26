@@ -84,7 +84,7 @@ pip install -e .
 pip install -e ".[interactive]"   # plotly tornado chart
 ```
 
-Requires Python 3.10+. Core dependencies: pandas, numpy, matplotlib.
+Requires Python 3.10+. Core dependencies: pandas, numpy, matplotlib, bk-viz (installed from GitHub, pinned in `pyproject.toml`).
 
 ## API reference
 
@@ -146,6 +146,7 @@ Tornado-style plot of correlation strength.
 | Python 3.10+ | Runtime (`requires-python` in `pyproject.toml`) |
 | pandas, NumPy | Binning, one-hot encoding and Pearson correlation |
 | matplotlib | Static tornado chart, the default output |
+| bk-viz | Braga design system chart theme; both outputs are drawn with it, scoped to the figure |
 | plotly (optional, `[interactive]`) | Interactive tornado chart |
 | pytest, ruff, mypy | Tests and checks in the `[dev]` extra |
 
