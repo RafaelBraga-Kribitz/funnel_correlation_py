@@ -1,73 +1,88 @@
 {
-  "output": "C:\\Users\\Benutzer1\\Dev\\portfolio-readme-work\\funnel_correlation_py\\docs\\assets\\hero.png",
+  "output": "hero.png",
   "width": 1600,
   "height": 640,
   "mode": "light",
-  "fonts": "Söhne from C:\\Users\\Benutzer1\\Dev\\braga-design-system-template\\public\\fonts",
+  "fonts": "BKribitz (design-system checkout)",
+  "design_system": "braga 2.1.0 (D-051)",
+  "status_state": "functional",
   "title_size": 112,
-  "descriptor_size": 36,
+  "descriptor_size": 34,
   "attempts": 1,
   "blocks": {
-    "kind": {
+    "wordmark": {
       "bbox": [
         72,
         72,
-        312,
-        104
+        180,
+        107
       ],
       "lines": [
-        "BRAGA · LIBRARY"
+        "BRAGA"
       ],
-      "font": "SohneMono-Buch.otf"
+      "font": "BKribitz-800.woff2"
+    },
+    "kind": {
+      "bbox": [
+        194,
+        76,
+        342,
+        106
+      ],
+      "lines": [
+        "·  LIBRARY"
+      ],
+      "font": "BKribitzMono-400.woff2"
     },
     "status": {
       "bbox": [
-        1368,
-        72,
+        1380,
+        76,
         1528,
-        104
+        106
       ],
       "lines": [
         "FUNCTIONAL"
       ],
-      "font": "SohneMono-Buch.otf"
+      "font": "BKribitzMono-400.woff2"
     },
     "facts": {
       "bbox": [
         72,
-        542,
-        1392,
-        570
+        538,
+        654,
+        568
       ],
       "lines": [
-        "LICENSE  MIT  ·  RUNTIME  Python >=3.10  ·  REPO  github.com/RafaelBraga-Kribitz/funnel_correlation_py"
+        "LICENSE  MIT  ·  RUNTIME  Python >=3.10"
       ],
-      "font": "SohneMono-Buch.otf"
+      "font": "BKribitzMono-400.woff2"
     },
     "title": {
       "bbox": [
         72,
-        184,
-        1212,
-        298
+        160,
+        1224,
+        277
       ],
       "lines": [
         "funnel-correlation-py"
       ],
-      "font": "Sohne-Fett.otf"
+      "font": "BKribitz-700.woff2"
     },
     "descriptor": {
       "bbox": [
         72,
-        326,
-        1122,
-        422
+        309,
+        888,
+        450
       ],
       "lines": [
-        "Binarize, correlate, plot: a Python port of the R correlationfunnel",
-        "package for ranking feature–target associations before modelling."
+        "Binarize, correlate, plot: a Python port of the R",
+        "correlationfunnel package for ranking feature–target",
+        "associations before modelling."
       ],
-      "font": "Sohne-Buch.otf"
+      "font": "BKribitz-400.woff2"
     }
   },
   "guardrails": [
@@ -77,7 +92,8 @@
     "no-overlap",
     "glyph-coverage-per-char",
     "contrast>=4.5",
-    "pixel-scan"
+    "pixel-scan",
+    "no-accent"
   ],
   "validated": true
 }

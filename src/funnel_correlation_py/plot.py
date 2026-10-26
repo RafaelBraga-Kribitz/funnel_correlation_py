@@ -10,15 +10,29 @@ Two output modes
 ~~~~~~~~~~~~~~~~
 * ``interactive=False``  (default) -> ``matplotlib`` figure
 * ``interactive=True``             -> ``plotly`` figure (hover labels)
+
+Styling
+~~~~~~~
+Both modes are drawn in the Braga design system through ``bk-viz``
+(``bk_theme``, light mode): page surface instead of white, BKribitz type,
+hairline structure, points in the IBCS actual role, labels in ink. The theme
+is scoped to the figure being built: the caller's global matplotlib rcParams
+and plotly default template are left untouched.
 """
 
 from __future__ import annotations
 
 from typing import Optional, Tuple
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import pandas as pd
+
+import bk_theme as bk
+
+#: Design-system mode the figures are drawn in.
+_THEME = "light"
 
 
 # ---------------------------------------------------------------------------
@@ -90,57 +104,81 @@ def _plot_static(
     title: str,
 ) -> "plt.Figure":
     """Build a static matplotlib correlation funnel."""
-    fig, ax = plt.subplots(figsize=figsize)
+    # Install the theme only for the duration of figure construction, so the
+    # caller's rcParams survive. Everything that matplotlib resolves later (at
+    # draw time or when ticks are regenerated) is set explicitly below.
+    dpi = mpl.rcParams["figure.dpi"]  # the caller's resolution, not the theme's
+    with mpl.rc_context():
+        bk.apply(_THEME, grid="x")
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+        fig.set_facecolor(bk.c("surface"))
+        ax.set_facecolor(bk.c("surface"))
 
-    # y-axis: feature as categorical.  If stored as pd.Categorical use the
-    # .cat.codes for numeric y positioning so matplotlib respects the order.
-    if hasattr(data["feature"], "cat"):
-        y_values = data["feature"].cat.codes
-        y_labels = data["feature"].cat.categories.tolist()
-        ax.set_yticks(range(len(y_labels)))
-        ax.set_yticklabels(y_labels, fontsize=9)
-    else:
-        # Fallback: derive order from |corr| if feature is plain string
-        feature_order = (
-            data
-            .groupby("feature")["correlation"]
-            .apply(lambda s: s.abs().max())
-            .sort_values(ascending=True)
-            .index
-            .tolist()
+        label_fp = bk.font("mono", "regular", "mono")
+
+        # y-axis: feature as categorical.  If stored as pd.Categorical use the
+        # .cat.codes for numeric y positioning so matplotlib respects the order.
+        if hasattr(data["feature"], "cat"):
+            y_values = data["feature"].cat.codes
+            y_labels = data["feature"].cat.categories.tolist()
+            ax.set_yticks(range(len(y_labels)))
+            ax.set_yticklabels(y_labels, fontproperties=label_fp)
+        else:
+            # Fallback: derive order from |corr| if feature is plain string
+            feature_order = (
+                data
+                .groupby("feature")["correlation"]
+                .apply(lambda s: s.abs().max())
+                .sort_values(ascending=True)
+                .index
+                .tolist()
+            )
+            feature_to_int = {f: i for i, f in enumerate(feature_order)}
+            y_values = data["feature"].map(feature_to_int)
+            ax.set_yticks(list(feature_to_int.values()))
+            ax.set_yticklabels(feature_to_int.keys(), fontproperties=label_fp)
+
+        # Vertical zero line: a reference, so a dashed structure hairline
+        ax.axvline(x=0, linestyle=(0, (3, 3)), color=bk.c("mid"),
+                   linewidth=1, zorder=1)
+
+        # Scatter points: one series, the IBCS actual role
+        ax.scatter(
+            data["correlation"],
+            y_values,
+            color=bk.c("sc-ac"),
+            alpha=alpha,
+            linewidths=0,
+            zorder=2,
+            s=40,
         )
-        feature_to_int = {f: i for i, f in enumerate(feature_order)}
-        y_values = data["feature"].map(feature_to_int)
-        ax.set_yticks(list(feature_to_int.values()))
-        ax.set_yticklabels(feature_to_int.keys(), fontsize=9)
 
-    # Vertical zero line
-    ax.axvline(x=0, linestyle="--", color="red", linewidth=1, zorder=1)
+        # Bin labels next to each point (equivalent to geom_text_repel)
+        _annotate_bins(ax, data, y_values)
 
-    # Scatter points
-    ax.scatter(
-        data["correlation"],
-        y_values,
-        color="#2c3e50",
-        alpha=alpha,
-        zorder=2,
-        s=40,
-    )
+        # Formatting
+        ax.set_xlim(limits)
+        ax.set_xlabel("Correlation", fontproperties=label_fp, color=bk.c("ink-2"))
+        ax.set_ylabel("Feature", fontproperties=label_fp, color=bk.c("ink-2"))
+        # The centre title slot keeps ax.get_title() working; the system sets
+        # titles flush left, so that artist is moved to the left edge.
+        ax.set_title(title, fontproperties=bk.font("display", "bold", "project"),
+                     color=bk.c("ink"), loc="center")
+        ax.title.set_x(0.0)
+        ax.title.set_horizontalalignment("left")
 
-    # Bin labels next to each point (equivalent to geom_text_repel)
-    _annotate_bins(ax, data, y_values)
+        bk.strip_chrome(ax, keep=("left", "bottom"))
+        ax.tick_params(
+            length=0,
+            labelcolor=bk.c("ink-2"),
+            labelsize=bk.SIZE["mono"],
+            labelfontfamily=label_fp.get_family(),
+        )
+        ax.grid(axis="x", color=bk.c("rule-c"), linewidth=1, linestyle="-")
+        ax.grid(axis="y", visible=False)
+        ax.set_axisbelow(True)
 
-    # Formatting
-    ax.set_xlim(limits)
-    ax.set_xlabel("Correlation", fontsize=11)
-    ax.set_ylabel("Feature", fontsize=11)
-    ax.set_title(title, fontsize=13, fontweight="bold")
-
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.grid(axis="x", linestyle=":", alpha=0.4)
-
-    fig.tight_layout()
+        fig.tight_layout()
     return fig
 
 
@@ -155,6 +193,7 @@ def _annotate_bins(
     left.  This is a simple version of geom_text_repel that avoids the heavy
     adjustText dependency for typical funnel sizes.
     """
+    fp = bk.font("mono", "regular", "mono-sm")  # 12px, the system's floor
     for (_, row), y in zip(data.iterrows(), y_values):
         corr = row["correlation"]
         label = str(row["bin"])
@@ -164,8 +203,8 @@ def _annotate_bins(
             corr + offset,
             y,
             label,
-            fontsize=7,
-            color="#2c3e50",
+            fontproperties=fp,
+            color=bk.c("ink-2"),
             ha=ha,
             va="center",
         )
@@ -210,10 +249,18 @@ def _plot_interactive(
             .tolist()
         )
 
+    # Design-system template, passed to this figure only: the caller's plotly
+    # default template is not changed.
+    # apply() registers the fonts and sets the mode the template is read in;
+    # rc_context() keeps it from leaving matplotlib rcParams changed.
+    with mpl.rc_context():
+        bk.apply(_THEME, grid="x")
+        template = bk.plotly_template(register_as="bk", set_default=False)
+
     fig = go.Figure()
 
-    # Zero line
-    fig.add_vline(x=0, line_dash="dash", line_color="red", line_width=1)
+    # Zero line: a reference, so a dashed structure hairline
+    fig.add_vline(x=0, line_dash="dash", line_color=bk.c("mid"), line_width=1)
 
     # Points
     fig.add_trace(
@@ -221,24 +268,25 @@ def _plot_interactive(
             x=data["correlation"],
             y=data["feature"].astype(str),
             mode="markers+text",
-            marker=dict(color="#2c3e50", opacity=alpha, size=8),
+            marker=dict(color=bk.c("sc-ac"), opacity=alpha, size=8),
             text=data["bin"].astype(str),
             textposition="middle right",
-            textfont=dict(size=9, color="#2c3e50"),
+            textfont=dict(size=12, color=bk.c("ink-2")),
             hovertext=hover_text,
             hoverinfo="text",
         )
     )
 
     fig.update_layout(
-        title=dict(text=title, font=dict(size=14)),
-        xaxis=dict(range=list(limits), title="Correlation"),
+        title=dict(text=title),
+        xaxis=dict(range=list(limits), title="Correlation", showgrid=True),
         yaxis=dict(
+            showgrid=False,
             categoryorder="array",
             categoryarray=y_axis_order,
             title="Feature",
         ),
-        template="simple_white",
+        template=template,
         height=max(400, len(y_axis_order) * 20 + 100),
         showlegend=False,
     )
