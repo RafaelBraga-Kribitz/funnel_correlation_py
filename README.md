@@ -1,6 +1,6 @@
 # funnel-correlation-py
 
-![funnel-correlation-py — Binarize, correlate, plot: a Python port of the R correlationfunnel package for ranking feature–target associations before modelling.](docs/assets/hero.png)
+![funnel-correlation-py: binarize, correlate, plot: a Python port of the R correlationfunnel package for ranking feature–target associations before modelling.](docs/assets/hero.png)
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -12,7 +12,7 @@ Mixed-type tables hide which feature levels actually move with a target. This li
 
 ![Correlation funnel rendered by the Quick start below on the bundled bank-marketing example (4,521 rows, 74 binary features); strongest predictors of TERM_DEPOSIT at the top](docs/assets/funnel_example.png)
 
-*Output of the Quick start code below on the bundled bank-marketing example. The plot is the library's own `plot_correlation_funnel` result, not a hand-made illustration.*
+*Output of the Quick start code below on the bundled bank-marketing example. The strongest positive associations with a term deposit are the top quartile of call duration (`DURATION` bin 329_3025, r = 0.33) and a successful previous campaign (`POUTCOME` success, r = 0.28); `DEFAULT` sits at zero. The plot is the library's own `plot_correlation_funnel` result, not a hand-made illustration.*
 
 ```mermaid
 flowchart TD
@@ -112,6 +112,16 @@ Tornado-style plot of correlation strength.
 | `figsize` | `tuple` | `(10, 8)` | Static figure size (inches) |
 | `title` | `str` | `"Correlation Funnel"` | Plot title |
 
+## Stack
+
+| Technology | Role |
+|---|---|
+| Python 3.10+ | Runtime (`requires-python` in `pyproject.toml`) |
+| pandas, NumPy | Binning, one-hot encoding and Pearson correlation |
+| matplotlib | Static tornado chart, the default output |
+| plotly (optional, `[interactive]`) | Interactive tornado chart |
+| pytest, ruff, mypy | Tests and checks in the `[dev]` extra |
+
 ## Repository structure
 
 ```
@@ -151,7 +161,7 @@ PYTHONPATH=src pytest tests/ -v
 
 MIT, as declared in `pyproject.toml`.
 
-Original R package: [Business Science — correlationfunnel](https://github.com/business-science/correlationfunnel). Binary-correlation background: Duan et al., 2014, *Selecting the right correlation measure for binary data*, ACM TKDD.
+Original R package: [Business Science, correlationfunnel](https://github.com/business-science/correlationfunnel). Binary-correlation background: Duan et al., 2014, *Selecting the right correlation measure for binary data*, ACM TKDD.
 
 ## Author
 
