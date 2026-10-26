@@ -97,7 +97,9 @@ def binarize(
 
     # -- Separate numeric and categorical columns ----------------------------
     numeric_cols = data.select_dtypes(include=["number"]).columns.tolist()
-    cat_cols = data.select_dtypes(include=["object", "category"]).columns.tolist()
+    cat_cols = data.select_dtypes(
+        include=["object", "string", "category"]
+    ).columns.tolist()
 
     pieces: list[pd.DataFrame] = []
 
@@ -146,7 +148,10 @@ def _check_data_types(data: pd.DataFrame, fun_name: str) -> None:
         dtype_name = data[col].dtype.name
         is_numeric = pd.api.types.is_numeric_dtype(data[col])
         is_categorical = isinstance(data[col].dtype, pd.CategoricalDtype)
-        is_string = pd.api.types.is_string_dtype(data[col]) and data[col].dtype == object
+        # pandas 3 reads text as the dedicated string dtype ("str"), pandas 2 as object
+        is_string = (
+            pd.api.types.is_string_dtype(data[col]) and data[col].dtype == object
+        ) or isinstance(data[col].dtype, pd.StringDtype)
         is_bool = pd.api.types.is_bool_dtype(data[col])
 
         if not (is_numeric or is_categorical or is_string or is_bool):
